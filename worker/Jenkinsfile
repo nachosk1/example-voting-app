@@ -4,6 +4,7 @@ pipeline {
     tools {
       maven 'maven 3.9.8'
     }
+
     stages{ 
         stage('build'){ 
             steps{ 
@@ -15,19 +16,25 @@ pipeline {
         } 
         stage('test'){ 
             steps{ 
-                echo 'Running unit tests on worker app' 
+                echo 'Running unit tests on worker app..' 
+                dir('worker'){ 
+                  sh 'mvn clean test' 
+                } 
             } 
         } 
         stage('package'){ 
             steps{ 
-                echo 'Packaging worker app'
+                echo 'packaging worker app'
+                dir('worker'){ 
+                  sh 'mvn package -DskipTests' 
+                } 
             } 
         } 
     }
     post{ 
         always{ 
+            archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
             echo 'Building multibranch pipeline for worker is completed..'
-
     }
   }
 }
