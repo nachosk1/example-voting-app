@@ -1,35 +1,35 @@
 pipeline { 
     agent {
       docker{
-        image 'maven:3.9.8-sapmachine-21'
-        args '-v $HOME/.m2:/root/.m2' 
+          image 'maven:3.9.8-sapmachine-21'
+          args '-v $HOME/.m2:/root/.m2' 
       }
     }
- 
+
     stages{ 
-        stage('build'){ 
+        stage('build'){
             steps{ 
-                echo 'Building worker app' 
+                echo 'Compiling worker app' 
                 dir('worker'){ 
-                  sh 'mvn compile' 
+                    sh 'mvn compile' 
                 } 
             } 
         } 
-        stage('test'){ 
+        stage('test'){
             steps{ 
                 echo 'Running unit tests on worker app..' 
                 dir('worker'){ 
-                  sh 'mvn clean test' 
+                    sh 'mvn clean test' 
                 } 
             } 
         } 
-        stage('package'){ 
+        stage('package'){
             steps{ 
                 echo 'packaging worker app into a jarfile'
                 dir('worker'){ 
-                  sh 'mvn package -DskipTests'
-                  archiveArtifacts artifacts: '**/target/*.jar',
-                  fingerprint: true 
+                    sh 'mvn package -DskipTests'
+                    archiveArtifacts artifacts: '**/target/*.jar',
+                    fingerprint: true 
                 } 
             } 
         } 
@@ -50,6 +50,12 @@ pipeline {
     post{ 
         always{ 
             echo 'The job is complete' 
+        }
+        failure{
+            slackSend (channel: "instavote", message: "Build Failed - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)")
+        }
+        success{
+            slackSend (channel: "instavote", message: "Build Succeeded - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)")     
         }
     }
 }
