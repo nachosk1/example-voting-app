@@ -69,7 +69,7 @@ pipeline {
         echo 'Packaging worker app with docker'
         script {
           docker.withRegistry('https://index.docker.io/v1/', 'dockerlogin') {
-            def workerImage = docker.build("xxxxx/worker:v${env.BUILD_ID}", './worker')
+            def workerImage = docker.build("nachodev666/worker:v${env.BUILD_ID}", './worker')
             workerImage.push()
             workerImage.push("${env.BRANCH_NAME}")
             workerImage.push('latest')
@@ -125,7 +125,7 @@ pipeline {
         echo 'Packaging result app with docker'
         script {
           docker.withRegistry('https://index.docker.io/v1/', 'dockerlogin') {
-            def resultImage = docker.build("xxxxx/result:v${env.BUILD_ID}", './result')
+            def resultImage = docker.build("nachodev666/result:v${env.BUILD_ID}", './result')
             resultImage.push()
             resultImage.push("${env.BRANCH_NAME}")
             resultImage.push('latest')
