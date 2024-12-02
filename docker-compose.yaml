@@ -40,7 +40,7 @@ services:
     image: nachodev666/result:latest
     build: ./result
     ports:
-      - 5001:80
+      - 5003:80
     depends_on:
       - db
     networks:
